@@ -1,0 +1,1181 @@
+<html lang="ko"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>성경암송 연습 🌟</title>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&amp;family=Nanum+Pen+Script&amp;display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #4FC3F7;
+    --blue: #1976D2;
+    --deep: #0D47A1;
+    --light: #E3F2FD;
+    --mint: #80DEEA;
+    --yellow: #FFF59D;
+    --pink: #F8BBD9;
+    --white: #FAFEFF;
+    --correct: #66BB6A;
+    --wrong: #EF5350;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Gaegu', cursive;
+    background: linear-gradient(135deg, #E3F2FD 0%, #B3E5FC 40%, #E0F7FA 100%);
+    min-height: 100vh;
+    padding: 20px;
+    overflow-x: hidden;
+  }
+
+  /* 구름 배경 */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -50px; left: -50px;
+    width: 200px; height: 120px;
+    background: white;
+    border-radius: 60px;
+    opacity: 0.4;
+    box-shadow: 250px 80px 0 white, 500px 20px 0 white, 700px 60px 0 white,
+                150px 300px 0 white, 450px 250px 0 white, 650px 320px 0 white;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* 헤더 */
+  .header {
+    text-align: center;
+    margin-bottom: 24px;
+    animation: floatDown 0.8s ease;
+  }
+
+  @keyframes floatDown {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .header h1 {
+    font-family: 'Nanum Pen Script', cursive;
+    font-size: 48px;
+    color: var(--deep);
+    text-shadow: 3px 3px 0 var(--mint), 5px 5px 0 rgba(79,195,247,0.3);
+    line-height: 1.2;
+  }
+
+  .header .subtitle {
+    font-size: 22px;
+    color: var(--blue);
+    margin-top: 4px;
+  }
+
+  .stars {
+    font-size: 28px;
+    letter-spacing: 6px;
+    display: block;
+    margin-top: 4px;
+  }
+
+  /* 점수판 */
+  .scoreboard {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .score-card {
+    background: white;
+    border: 3px solid var(--sky);
+    border-radius: 20px;
+    padding: 10px 22px;
+    text-align: center;
+    box-shadow: 0 4px 0 var(--sky);
+    min-width: 110px;
+  }
+
+  .score-card .label {
+    font-size: 16px;
+    color: var(--blue);
+  }
+
+  .score-card .value {
+    font-size: 32px;
+    color: var(--deep);
+    font-weight: 700;
+  }
+
+  /* 탭 메뉴 */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .tab-btn {
+    font-family: 'Gaegu', cursive;
+    font-size: 18px;
+    padding: 10px 18px;
+    border: 3px solid var(--blue);
+    border-radius: 30px;
+    background: white;
+    color: var(--blue);
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-appearance: none;
+  }
+
+  .tab-btn.active {
+    background: var(--blue);
+    color: white;
+    box-shadow: 0 4px 0 var(--deep);
+    transform: translateY(-2px);
+  }
+
+  /* 구절 선택 */
+  .verse-selector {
+    background: white;
+    border: 3px solid var(--sky);
+    border-radius: 24px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 6px 0 var(--sky);
+  }
+
+  .verse-selector h2 {
+    font-size: 24px;
+    color: var(--deep);
+    margin-bottom: 14px;
+    text-align: center;
+  }
+
+  .verse-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+  }
+
+  .verse-item {
+    background: var(--light);
+    border: 2px solid var(--sky);
+    border-radius: 14px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-appearance: none;
+    font-family: 'Gaegu', cursive;
+    font-size: 17px;
+    color: var(--deep);
+    text-align: left;
+    line-height: 1.4;
+  }
+
+  .verse-item:active { transform: scale(0.97); }
+
+  .verse-item.selected {
+    background: var(--blue);
+    color: white;
+    border-color: var(--deep);
+    box-shadow: 0 4px 0 var(--deep);
+  }
+
+  .verse-item .ref {
+    font-size: 14px;
+    opacity: 0.75;
+    display: block;
+  }
+
+  /* 메인 카드 */
+  .main-card {
+    background: white;
+    border: 3px solid var(--sky);
+    border-radius: 28px;
+    padding: 28px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 0 var(--sky);
+    animation: popIn 0.4s ease;
+  }
+
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .topic-badge {
+    background: var(--blue);
+    color: white;
+    border-radius: 30px;
+    padding: 6px 18px;
+    font-size: 18px;
+  }
+
+  .ref-badge {
+    background: var(--yellow);
+    border: 2px solid #F9A825;
+    border-radius: 30px;
+    padding: 6px 18px;
+    font-size: 18px;
+    color: #5D4037;
+  }
+
+  /* 구절 텍스트 */
+  .verse-text {
+    font-family: 'Nanum Pen Script', cursive;
+    font-size: 30px;
+    line-height: 1.8;
+    color: #1A237E;
+    margin-bottom: 20px;
+    word-break: keep-all;
+    background: linear-gradient(135deg, #F0F9FF, #E8F5FF);
+    border-radius: 16px;
+    padding: 18px 20px;
+    border-left: 5px solid var(--sky);
+  }
+
+  /* 빈칸 */
+  .blank {
+    display: inline-block;
+    border-bottom: 3px solid var(--blue);
+    min-width: 80px;
+    margin: 0 3px;
+    vertical-align: bottom;
+    position: relative;
+  }
+
+  .blank-input {
+    font-family: 'Nanum Pen Script', cursive;
+    font-size: 28px;
+    color: var(--blue);
+    border: none;
+    outline: none;
+    background: transparent;
+    width: 100%;
+    min-width: 60px;
+    text-align: center;
+    -webkit-appearance: none;
+  }
+
+  .blank.correct { border-color: var(--correct); }
+  .blank.wrong { border-color: var(--wrong); }
+  .blank.correct .blank-input { color: var(--correct); }
+  .blank.wrong .blank-input { color: var(--wrong); }
+
+  /* 선택지 버튼 */
+  .choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+    justify-content: center;
+  }
+
+  .choice-btn {
+    font-family: 'Nanum Pen Script', cursive;
+    font-size: 26px;
+    padding: 8px 22px;
+    background: var(--light);
+    border: 2.5px solid var(--sky);
+    border-radius: 40px;
+    color: var(--deep);
+    cursor: pointer;
+    transition: all 0.18s;
+    -webkit-appearance: none;
+    box-shadow: 0 3px 0 var(--sky);
+  }
+
+  .choice-btn:active { transform: translateY(2px); box-shadow: none; }
+  .choice-btn.used { opacity: 0.35; pointer-events: none; }
+  .choice-btn.correct-choice { background: #C8E6C9; border-color: var(--correct); box-shadow: 0 3px 0 var(--correct); }
+  .choice-btn.wrong-choice { background: #FFCDD2; border-color: var(--wrong); box-shadow: 0 3px 0 var(--wrong); }
+
+  /* 버튼 영역 */
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 18px;
+  }
+
+  .btn {
+    font-family: 'Gaegu', cursive;
+    font-size: 22px;
+    padding: 12px 28px;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-appearance: none;
+    box-shadow: 0 5px 0 rgba(0,0,0,0.15);
+  }
+
+  .btn:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.15); }
+
+  .btn-check { background: linear-gradient(135deg, #42A5F5, #1565C0); color: white; }
+  .btn-next  { background: linear-gradient(135deg, #66BB6A, #2E7D32); color: white; }
+  .btn-hint  { background: linear-gradient(135deg, #FFA726, #E65100); color: white; }
+  .btn-reset { background: linear-gradient(135deg, #AB47BC, #6A1B9A); color: white; }
+  .btn-mode  { background: linear-gradient(135deg, #26C6DA, #00838F); color: white; }
+  .btn-nextblank { background: linear-gradient(135deg, #FF8A65, #D84315); color: white; }
+
+  /* ref-fill 빈칸 크기 */
+  .ref-blank {
+    border-bottom: 3px solid #1976D2;
+    min-width: 90px;
+  }
+
+  /* 결과 메시지 */
+  .result-msg {
+    text-align: center;
+    font-size: 28px;
+    margin-top: 16px;
+    font-family: 'Nanum Pen Script', cursive;
+    padding: 12px;
+    border-radius: 14px;
+    display: none;
+  }
+
+  .result-msg.show { display: block; animation: bounce 0.4s ease; }
+
+  @keyframes bounce {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+  }
+
+  .result-msg.success { background: #C8E6C9; color: #1B5E20; }
+  .result-msg.fail    { background: #FFCDD2; color: #B71C1C; }
+
+  /* 전체 보기 모드 */
+  .full-view .verse-text { font-size: 30px; }
+
+  /* 모드 배지 */
+  .mode-badge {
+    text-align: center;
+    margin-bottom: 14px;
+  }
+
+  .mode-badge span {
+    font-size: 20px;
+    background: var(--mint);
+    border: 2px solid #00ACC1;
+    border-radius: 20px;
+    padding: 5px 18px;
+    color: var(--deep);
+  }
+
+  /* 별 애니메이션 */
+  .star-pop {
+    position: fixed;
+    font-size: 40px;
+    pointer-events: none;
+    z-index: 999;
+    animation: starFly 1s ease forwards;
+  }
+
+  @keyframes starFly {
+    from { opacity: 1; transform: translateY(0) scale(1); }
+    to   { opacity: 0; transform: translateY(-120px) scale(1.8); }
+  }
+
+  /* 프로그레스 */
+  .progress-bar {
+    height: 14px;
+    background: var(--light);
+    border-radius: 10px;
+    border: 2px solid var(--sky);
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--sky), var(--blue));
+    border-radius: 10px;
+    transition: width 0.5s ease;
+  }
+
+  /* 완료 화면 */
+  .finish-screen {
+    text-align: center;
+    padding: 30px;
+    display: none;
+  }
+
+  .finish-screen.show { display: block; animation: popIn 0.5s ease; }
+
+  .finish-screen h2 {
+    font-family: 'Nanum Pen Script', cursive;
+    font-size: 52px;
+    color: var(--deep);
+    margin-bottom: 10px;
+  }
+
+  .finish-screen .big-stars { font-size: 60px; }
+
+  .finish-score {
+    font-size: 30px;
+    color: var(--blue);
+    margin: 16px 0;
+  }
+
+  @media (max-width: 500px) {
+    .header h1 { font-size: 38px; }
+    .verse-text { font-size: 26px; }
+    .blank-input { font-size: 24px; }
+    .choice-btn { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- 헤더 -->
+  <div class="header">
+    <h1>✝️ 성경암송 연습 🌟</h1>
+    <div class="subtitle">사랑의교회 성경암송 A-C</div>
+    <span class="stars">⭐ ⭐ ⭐</span>
+    <div style="margin-top:12px;">
+      <button type="button" onclick="downloadApp()" style="font-family:'Gaegu',cursive;font-size:18px;padding:10px 24px;background:linear-gradient(135deg,#43A047,#1B5E20);color:white;border:none;border-radius:30px;cursor:pointer;box-shadow:0 4px 0 #1B5E20;-webkit-appearance:none;">
+        💾 앱 저장하기 (HTML 다운로드)
+      </button>
+    </div>
+  </div>
+
+  <!-- 점수판 -->
+  <div class="scoreboard">
+    <div class="score-card">
+      <div class="label">🎯 맞춘 수</div>
+      <div class="value" id="score-correct">0</div>
+    </div>
+    <div class="score-card">
+      <div class="label">📖 푼 구절</div>
+      <div class="value" id="score-done">0</div>
+    </div>
+    <div class="score-card">
+      <div class="label">🌟 별 점수</div>
+      <div class="value" id="score-stars">0</div>
+    </div>
+  </div>
+
+  <!-- 탭 -->
+  <div class="tabs">
+    <button type="button" class="tab-btn active" onclick="selectGroup('A')">A. 새로운 삶</button>
+    <button type="button" class="tab-btn" onclick="selectGroup('B')">B. 그리스도를 전파함</button>
+    <button type="button" class="tab-btn" onclick="selectGroup('C')">C. 하나님을 의뢰함</button>
+    <button type="button" class="tab-btn" onclick="startAllRandom()">🎲 전체 랜덤</button>
+  </div>
+
+  <!-- 구절 선택 -->
+  <div class="verse-selector" id="verse-selector" style="display: block;">
+    <h2>📖 암송할 구절을 골라요!</h2>
+    <div class="verse-grid" id="verse-grid"><button type="button" class="verse-item"><span class="ref">고린도후서 5:17</span>중심되신 그리스도</button><button type="button" class="verse-item"><span class="ref">갈라디아서 2:20</span>중심되신 그리스도</button><button type="button" class="verse-item"><span class="ref">로마서 12:1</span>그리스도께 순종</button><button type="button" class="verse-item"><span class="ref">요한복음 14:21</span>그리스도께 순종</button><button type="button" class="verse-item"><span class="ref">디모데후서 3:16</span>말씀</button><button type="button" class="verse-item"><span class="ref">여호수아 1:8</span>말씀</button><button type="button" class="verse-item"><span class="ref">요한복음 15:7</span>기도</button><button type="button" class="verse-item"><span class="ref">빌립보서 4:6-7</span>기도</button><button type="button" class="verse-item"><span class="ref">마태복음 18:20</span>교제</button><button type="button" class="verse-item"><span class="ref">히브리서 10:24-25</span>교제</button><button type="button" class="verse-item"><span class="ref">마태복음 4:19</span>증거</button><button type="button" class="verse-item"><span class="ref">로마서 1:16</span>증거</button><button type="button" class="verse-item" style="background: linear-gradient(135deg, rgb(227, 242, 253), rgb(187, 222, 251)); border-color: rgb(25, 118, 210);">🎲 랜덤으로 풀기!</button></div>
+  </div>
+
+  <!-- 모드 선택 배지 -->
+  <div class="mode-badge" id="mode-badge" style="display:none">
+    <span id="mode-label">✏️ 빈칸 채우기 모드</span>
+    <button type="button" class="btn btn-mode" style="margin-left:10px;font-size:18px;padding:6px 16px;" onclick="toggleMode()">모드 변경</button>
+  </div>
+
+  <!-- 진행 바 -->
+  <div class="progress-bar" id="progress-bar" style="display:none">
+    <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+  </div>
+
+  <!-- 메인 카드 -->
+  <div class="main-card" id="main-card" style="display:none">
+    <div class="card-header">
+      <span class="topic-badge" id="topic-badge">주제</span>
+      <span class="ref-badge" id="ref-badge">성경구절</span>
+    </div>
+
+    <div class="verse-text" id="verse-display"></div>
+
+    <!-- 선택지 (객관식 모드) -->
+    <div class="choices" id="choices-area"></div>
+
+    <div class="result-msg" id="result-msg"></div>
+
+    <div class="btn-row">
+      <button type="button" class="btn btn-check" id="btn-check" onclick="checkAnswer()" style="display:none">✅ 확인!</button>
+      <button type="button" class="btn btn-nextblank" id="btn-next-blank" onclick="moveFillFocus(currentFillBlankIdx+1)" style="display:none">다음칸 ➡️</button>
+      <button type="button" class="btn btn-hint" onclick="showHint()">💡 힌트</button>
+      <button type="button" class="btn btn-next" id="btn-next" onclick="nextVerse()">다음 ➡️</button>
+      <button type="button" class="btn btn-reset" onclick="resetCard()">🔄 다시</button>
+    </div>
+  </div>
+
+  <!-- 완료 화면 -->
+  <div class="finish-screen" id="finish-screen">
+    <div class="big-stars">🌟🌟🌟</div>
+    <h2>잘했어요! 🎉</h2>
+    <div class="finish-score" id="finish-score"></div>
+    <button type="button" class="btn btn-next" style="font-size:24px;padding:14px 40px;margin-top:10px;" onclick="restartAll()">🔄 처음부터 다시!</button>
+  </div>
+
+</div>
+
+<script>
+// ─── 데이터 ───────────────────────────────────────────────
+var VERSES = [
+  // A. 새로운 삶
+  { group:'A', topic:'A-1. 중심되신 그리스도', ref:'고린도후서 5:17',
+    text:'그런즉 누구든지 그리스도 안에 있으면 새로운 피조물이라 이전 것은 지나갔으니 보라 새 것이 되었도다' },
+  { group:'A', topic:'A-1. 중심되신 그리스도', ref:'갈라디아서 2:20',
+    text:'내가 그리스도와 함께 십자가에 못박혔나니 그런즉 이제는 내가 사는 것이 아니요 오직 내 안에 그리스도께서 사시는 것이라' },
+  { group:'A', topic:'A-2. 그리스도께 순종', ref:'로마서 12:1',
+    text:'너희 몸을 하나님이 기뻐하시는 거룩한 산 제물로 드리라 이는 너희가 드릴 영적 예배니라' },
+  { group:'A', topic:'A-2. 그리스도께 순종', ref:'요한복음 14:21',
+    text:'나의 계명을 지키는 자라야 나를 사랑하는 자니 나를 사랑하는 자는 내 아버지께 사랑을 받을 것이요 나도 그를 사랑하여 그에게 나를 나타내리라' },
+  { group:'A', topic:'A-3. 말씀', ref:'디모데후서 3:16',
+    text:'모든 성경은 하나님의 감동으로 된 것으로 교훈과 책망과 바르게 함과 의로 교육하기에 유익하니' },
+  { group:'A', topic:'A-3. 말씀', ref:'여호수아 1:8',
+    text:'이 율법책을 네 입에서 떠나지 말게 하며 주야로 그것을 묵상하여 그 안에 기록된 대로 다 지켜 행하라 그리하면 네 길이 평탄하게 될 것이며 네가 형통하리라' },
+  { group:'A', topic:'A-4. 기도', ref:'요한복음 15:7',
+    text:'너희가 내 안에 거하고 내 말이 너희 안에 거하면 무엇이든지 원하는 대로 구하라 그리하면 이루리라' },
+  { group:'A', topic:'A-4. 기도', ref:'빌립보서 4:6-7',
+    text:'아무것도 염려하지 말고 다만 모든 일에 기도와 간구로 너희 구할 것을 감사함으로 하나님께 아뢰라 그리하면 모든 지각에 뛰어난 하나님의 평강이 그리스도 예수 안에서 너희 마음과 생각을 지키시리라' },
+  { group:'A', topic:'A-5. 교제', ref:'마태복음 18:20',
+    text:'두세 사람이 내 이름으로 모인 곳에는 나도 그들 중에 있느니라' },
+  { group:'A', topic:'A-5. 교제', ref:'히브리서 10:24-25',
+    text:'서로 돌아보아 사랑과 선행을 격려하며 모이기를 폐하는 어떤 사람들의 습관과 같이 하지 말고 오직 권하여 그날이 가까움을 볼수록 더욱 그리하자' },
+  { group:'A', topic:'A-6. 증거', ref:'마태복음 4:19',
+    text:'나를 따라 오라 내가 너희를 사람을 낚는 어부가 되게 하리라' },
+  { group:'A', topic:'A-6. 증거', ref:'로마서 1:16',
+    text:'내가 복음을 부끄러워하지 아니하노니 이 복음은 모든 믿는 자에게 구원을 주시는 하나님의 능력이 됨이라' },
+
+  // B. 그리스도를 전파함
+  { group:'B', topic:'B-1. 모든 사람이 죄를 범함', ref:'로마서 3:23',
+    text:'모든 사람이 죄를 범하였으매 하나님의 영광에 이르지 못하더니' },
+  { group:'B', topic:'B-1. 모든 사람이 죄를 범함', ref:'이사야 53:6',
+    text:'우리는 다 양 같아서 그릇 행하여 각기 제 길로 갔거늘 여호와께서는 우리 모두의 죄악을 그에게 담당시키셨도다' },
+  { group:'B', topic:'B-2. 죄의 형벌', ref:'로마서 6:23',
+    text:'죄의 삯은 사망이요 하나님의 은사는 그리스도 예수 우리 주 안에 있는 영생이니라' },
+  { group:'B', topic:'B-2. 죄의 형벌', ref:'히브리서 9:27',
+    text:'한 번 죽는 것은 사람에게 정하신 것이요 그 후에는 심판이 있으리니' },
+  { group:'B', topic:'B-3. 그리스도께서 값을 치르심', ref:'로마서 5:8',
+    text:'우리가 아직 죄인 되었을 때에 그리스도께서 우리를 위하여 죽으심으로 하나님께서 우리에게 대한 자기의 사랑을 확증하셨느니라' },
+  { group:'B', topic:'B-3. 그리스도께서 값을 치르심', ref:'베드로전서 3:18',
+    text:'그리스도께서도 단번에 죄를 위하여 죽으사 의인으로서 불의한 자를 대신하셨으니 이는 우리를 하나님 앞으로 인도하려 하심이라' },
+  { group:'B', topic:'B-4. 선행으로 구원받지 못함', ref:'에베소서 2:8-9',
+    text:'너희는 그 은혜에 의하여 믿음으로 말미암아 구원을 받았으니 이것은 너희에게서 난 것이 아니요 하나님의 선물이라 행위에서 난 것이 아니니 이는 누구든지 자랑하지 못하게 함이라' },
+  { group:'B', topic:'B-4. 선행으로 구원받지 못함', ref:'디도서 3:5',
+    text:'우리를 구원하시되 우리가 행한 바 의로운 행위로 말미암지 아니하고 오직 그의 긍휼하심을 따라 중생의 씻음과 성령의 새롭게 하심으로 하셨나니' },
+  { group:'B', topic:'B-5. 그리스도를 모셔야 함', ref:'요한복음 1:12',
+    text:'영접하는 자 곧 그 이름을 믿는 자들에게는 하나님의 자녀가 되는 권세를 주셨으니' },
+  { group:'B', topic:'B-5. 그리스도를 모셔야 함', ref:'요한계시록 3:20',
+    text:'볼지어다 내가 문밖에 서서 두드리노니 누구든지 내 음성을 듣고 문을 열면 내가 그에게로 들어가 그와 더불어 먹고 그는 나와 더불어 먹으리라' },
+  { group:'B', topic:'B-6. 구원의 확신', ref:'요한일서 5:13',
+    text:'내가 하나님의 아들의 이름을 믿는 너희에게 이것을 쓰는 것은 너희로 하여금 너희에게 영생이 있음을 알게 하려 함이라' },
+  { group:'B', topic:'B-6. 구원의 확신', ref:'요한복음 5:24',
+    text:'내 말을 듣고 또 나 보내신 이를 믿는 자는 영생을 얻었고 심판에 이르지 아니하나니 사망에서 생명으로 옮겼느니라' },
+
+  // C. 하나님을 의뢰함
+  { group:'C', topic:'C-1. 성령', ref:'고린도전서 3:16',
+    text:'너희는 너희가 하나님의 성전인 것과 하나님의 성령이 너희 안에 계시는 것을 알지 못하느냐' },
+  { group:'C', topic:'C-1. 성령', ref:'고린도전서 2:12',
+    text:'우리가 세상의 영을 받지 아니하고 오직 하나님으로부터 온 영을 받았으니 이는 우리로 하여금 하나님께서 우리에게 은혜로 주신 것들을 알게 하려 하심이라' },
+  { group:'C', topic:'C-2. 능력', ref:'이사야 41:10',
+    text:'두려워하지 말라 내가 너와 함께 함이라 놀라지 말라 나는 네 하나님이 됨이라 내가 너를 굳세게 하리라 참으로 너를 도와 주리라 참으로 나의 의로운 오른손으로 너를 붙들리라' },
+  { group:'C', topic:'C-2. 능력', ref:'빌립보서 4:13',
+    text:'내게 능력 주시는 자 안에서 내가 모든 것을 할 수 있느니라' },
+  { group:'C', topic:'C-3. 성실', ref:'예레미야애가 3:22-23',
+    text:'여호와의 인자와 긍휼이 무궁하시므로 우리가 진멸되지 아니함이니이다 이것들이 아침마다 새로우니 주의 성실하심이 크시도소이다' },
+  { group:'C', topic:'C-3. 성실', ref:'민수기 23:19',
+    text:'하나님은 사람이 아니시니 거짓말을 하지 않으시고 인생이 아니시니 후회가 없으시도다 어찌 그 말씀하신 바를 행하지 않으시며 하신 말씀을 실행하지 않으시랴' },
+  { group:'C', topic:'C-4. 평안', ref:'이사야 26:3',
+    text:'주께서 심지가 견고한 자를 평강하고 평강하도록 지키시리니 이는 그가 주를 신뢰함이니이다' },
+  { group:'C', topic:'C-4. 평안', ref:'베드로전서 5:7',
+    text:'너희 염려를 다 주께 맡기라 이는 그가 너희를 돌보심이라' },
+  { group:'C', topic:'C-5. 공급', ref:'로마서 8:32',
+    text:'자기 아들을 아끼지 아니하시고 우리 모든 사람을 위하여 내주신 이가 어찌 그 아들과 함께 모든 것을 우리에게 주시지 아니하겠느냐' },
+  { group:'C', topic:'C-5. 공급', ref:'빌립보서 4:19',
+    text:'나의 하나님이 그리스도 예수 안에서 영광 가운데 그 풍성한 대로 너희 모든 쓸 것을 채우시리라' },
+  { group:'C', topic:'C-6. 유혹에서 도우심', ref:'히브리서 2:18',
+    text:'그가 시험을 받아 고난을 당하셨은즉 시험 받는 자들을 능히 도우실 수 있느니라' },
+  { group:'C', topic:'C-6. 유혹에서 도우심', ref:'시편 119:9,11',
+    text:'청년이 무엇으로 그의 행실을 깨끗하게 하리이까 주의 말씀만 지킬 따름이니이다 내가 주께 범죄하지 아니하려 하여 주의 말씀을 내 마음에 두었나이다' }
+];
+
+// ─── 상태 ────────────────────────────────────────────────
+var currentGroup = 'A';
+var currentMode = 'fill'; // 'fill' | 'choice' | 'ref-fill' | 'view'
+var currentFillBlankIdx = 0; // 빈칸 채우기에서 현재 포커스 빈칸
+var currentVerseIdx = -1;
+var filteredVerses = [];
+var queuedVerses = [];
+var scoreCorrect = 0;
+var scoreDone = 0;
+var scoreStars = 0;
+var blanks = [];
+var blankAnswers = [];
+var currentChoiceTarget = -1; // 선택지 모드에서 현재 채울 빈칸 인덱스
+var answered = false;
+
+// ─── 초기화 ───────────────────────────────────────────────
+function init() {
+  selectGroup('A');
+}
+
+function selectGroup(g) {
+  currentGroup = g;
+  document.querySelectorAll('.tab-btn').forEach(function(b,i) {
+    var groups = ['A','B','C','ALL'];
+    b.classList.toggle('active', groups[i] === g);
+  });
+
+  if (g === 'ALL') {
+    filteredVerses = VERSES.slice();
+  } else {
+    filteredVerses = VERSES.filter(function(v){ return v.group === g; });
+  }
+
+  renderVerseGrid();
+  document.getElementById('main-card').style.display = 'none';
+  document.getElementById('mode-badge').style.display = 'none';
+  document.getElementById('progress-bar').style.display = 'none';
+  document.getElementById('finish-screen').classList.remove('show');
+  document.getElementById('verse-selector').style.display = 'block';
+}
+
+function renderVerseGrid() {
+  var grid = document.getElementById('verse-grid');
+  grid.innerHTML = '';
+  filteredVerses.forEach(function(v, i) {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'verse-item';
+    btn.innerHTML = '<span class="ref">' + v.ref + '</span>' + v.topic.split('. ').slice(1).join('. ');
+    btn.onclick = (function(idx){ return function(){ startWithVerse(idx); }; })(i);
+    grid.appendChild(btn);
+  });
+
+  // 랜덤 버튼
+  var randBtn = document.createElement('button');
+  randBtn.type = 'button';
+  randBtn.className = 'verse-item';
+  randBtn.style.background = 'linear-gradient(135deg, #E3F2FD, #BBDEFB)';
+  randBtn.style.borderColor = '#1976D2';
+  randBtn.innerHTML = '🎲 랜덤으로 풀기!';
+  randBtn.onclick = startRandom;
+  grid.appendChild(randBtn);
+}
+
+function startWithVerse(idx) {
+  queuedVerses = [idx];
+  currentVerseIdx = 0;
+  showVerse();
+}
+
+function startAllRandom() {
+  // 탭 활성화 표시
+  document.querySelectorAll('.tab-btn').forEach(function(b,i) {
+    b.classList.toggle('active', i === 3);
+  });
+  currentGroup = 'ALL';
+  filteredVerses = VERSES.slice();
+  // 구절 선택 화면 없이 바로 전체 랜덤 시작
+  queuedVerses = shuffle(filteredVerses.map(function(_,i){ return i; }));
+  currentVerseIdx = 0;
+  showVerse();
+}
+
+function startRandom() {
+  queuedVerses = shuffle(filteredVerses.map(function(_,i){ return i; }));
+  currentVerseIdx = 0;
+  showVerse();
+}
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+
+function showVerse() {
+  document.getElementById('verse-selector').style.display = 'none';
+  document.getElementById('finish-screen').classList.remove('show');
+  document.getElementById('mode-badge').style.display = 'block';
+  document.getElementById('progress-bar').style.display = 'block';
+  document.getElementById('main-card').style.display = 'block';
+
+  updateModeLabel();
+  renderCurrentVerse();
+  updateProgress();
+}
+
+function updateModeLabel() {
+  var labels = {
+    fill:     '✏️ 빈칸 채우기 모드',
+    choice:   '🎯 선택지 고르기 모드',
+    'ref-fill':'📖 구절 찾기 모드',
+    view:     '👀 전체 보기 모드'
+  };
+  document.getElementById('mode-label').textContent = labels[currentMode];
+}
+
+function toggleMode() {
+  var modes = ['fill','choice','ref-fill','view'];
+  var idx = modes.indexOf(currentMode);
+  currentMode = modes[(idx+1) % modes.length];
+  updateModeLabel();
+  renderCurrentVerse();
+}
+
+function renderCurrentVerse() {
+  if (currentVerseIdx >= queuedVerses.length) {
+    showFinish();
+    return;
+  }
+
+  var verseObj = filteredVerses[queuedVerses[currentVerseIdx]];
+  answered = false;
+  blanks = [];
+  blankAnswers = [];
+  currentChoiceTarget = 0;
+
+  document.getElementById('topic-badge').textContent = verseObj.topic;
+  // ref-fill 모드에서는 구절 참조가 정답이므로 숨김
+  if (currentMode === 'ref-fill') {
+    document.getElementById('ref-badge').textContent = '? ? ?';
+    document.getElementById('ref-badge').style.color = '#BDBDBD';
+  } else {
+    document.getElementById('ref-badge').textContent = verseObj.ref;
+    document.getElementById('ref-badge').style.color = '';
+  }
+  document.getElementById('result-msg').className = 'result-msg';
+  document.getElementById('result-msg').textContent = '';
+  document.getElementById('choices-area').innerHTML = '';
+  document.getElementById('btn-next-blank').style.display = 'none';
+  currentFillBlankIdx = 0;
+
+  var checkBtn = document.getElementById('btn-check');
+
+  if (currentMode === 'view') {
+    document.getElementById('verse-display').innerHTML = '<span style="color:#1976D2">' + verseObj.text + '</span>';
+    checkBtn.style.display = 'none';
+  } else if (currentMode === 'fill') {
+    renderFillBlanks(verseObj);
+    checkBtn.style.display = 'inline-block';
+  } else if (currentMode === 'choice') {
+    renderChoiceMode(verseObj);
+    checkBtn.style.display = 'none';
+  } else if (currentMode === 'ref-fill') {
+    renderRefFill(verseObj);
+    checkBtn.style.display = 'inline-block';
+  }
+}
+
+// ─── 빈칸 채우기 ──────────────────────────────────────────
+function renderFillBlanks(verseObj) {
+  var words = verseObj.text.split(' ');
+  var blankIndices = [];
+  var step = Math.max(2, Math.floor(words.length / Math.max(2, Math.floor(words.length * 0.35))));
+  for (var i = 1; i < words.length; i += step) {
+    if (words[i].length >= 2) blankIndices.push(i);
+    if (blankIndices.length >= 6) break;
+  }
+  if (blankIndices.length < 2) blankIndices = [1, Math.floor(words.length/2)];
+
+  blankAnswers = blankIndices.map(function(i){ return words[i]; });
+  currentFillBlankIdx = 0;
+
+  var html = '';
+  words.forEach(function(w, i) {
+    if (blankIndices.indexOf(i) !== -1) {
+      var bIdx = blankIndices.indexOf(i);
+      var width = Math.max(70, w.length * 22) + 'px';
+      html += '<span class="blank" id="blank-'+bIdx+'">'
+            + '<input class="blank-input" id="blank-input-'+bIdx+'" type="text" style="width:'+width+'" placeholder="___" />'
+            + '</span> ';
+      blanks.push(bIdx);
+    } else {
+      html += w + ' ';
+    }
+  });
+
+  document.getElementById('verse-display').innerHTML = html;
+
+  // 다음칸 버튼 표시
+  document.getElementById('btn-next-blank').style.display = 'inline-block';
+
+  // 각 input에 엔터키 → 다음 빈칸 이동 연결
+  blankAnswers.forEach(function(ans, i) {
+    var inp = document.getElementById('blank-input-'+i);
+    if (!inp) return;
+    inp.onkeydown = function(e) {
+      var key = e.keyCode || e.which;
+      if (key === 13) { e.preventDefault(); moveFillFocus(i + 1); }
+    };
+    inp.onfocus = function() { currentFillBlankIdx = i; updateFillFocusStyle(); };
+  });
+
+  // 첫 번째 칸 포커스
+  setTimeout(function(){
+    var first = document.getElementById('blank-input-0');
+    if (first) { first.focus(); updateFillFocusStyle(); }
+  }, 100);
+}
+
+function moveFillFocus(nextIdx) {
+  if (nextIdx >= blankAnswers.length) {
+    // 마지막 칸 → 확인 버튼으로 이동
+    document.getElementById('btn-check').focus();
+  } else {
+    currentFillBlankIdx = nextIdx;
+    var inp = document.getElementById('blank-input-'+nextIdx);
+    if (inp) { inp.focus(); updateFillFocusStyle(); }
+  }
+}
+
+function updateFillFocusStyle() {
+  blankAnswers.forEach(function(ans, i) {
+    var el = document.getElementById('blank-'+i);
+    if (!el) return;
+    if (el.classList.contains('correct') || el.classList.contains('wrong')) return;
+    el.style.borderColor = (i === currentFillBlankIdx) ? '#FF6F00' : '';
+    el.style.borderWidth = (i === currentFillBlankIdx) ? '3px' : '';
+  });
+}
+
+// ─── 구절 찾기 모드 (ref-fill) ────────────────────────────
+function renderRefFill(verseObj) {
+  // 본문은 전부 보여주고, 구절(참조)을 빈칸으로
+  document.getElementById('verse-display').innerHTML =
+    '<span style="color:#1A237E">' + verseObj.text + '</span>'
+    + '<div style="margin-top:18px;padding-top:14px;border-top:2px dashed #90CAF9;">'
+    + '<span style="font-size:22px;color:#1976D2;">📌 이 말씀의 성경 구절은?</span><br>'
+    + '<div style="margin-top:10px;display:flex;align-items:center;flex-wrap:wrap;gap:8px;">'
+    + buildRefBlanks(verseObj.ref)
+    + '</div></div>';
+
+  // 다음칸 버튼 표시
+  document.getElementById('btn-next-blank').style.display = 'inline-block';
+
+  // 엔터 이동 연결
+  blankAnswers.forEach(function(ans, i) {
+    var inp = document.getElementById('blank-input-'+i);
+    if (!inp) return;
+    inp.onkeydown = function(e) {
+      var key = e.keyCode || e.which;
+      if (key === 13) { e.preventDefault(); moveFillFocus(i + 1); }
+    };
+    inp.onfocus = function() { currentFillBlankIdx = i; updateFillFocusStyle(); };
+  });
+
+  setTimeout(function(){
+    var first = document.getElementById('blank-input-0');
+    if (first) { first.focus(); updateFillFocusStyle(); }
+  }, 100);
+}
+
+function buildRefBlanks(ref) {
+  // ref를 ' ' 기준으로 쪼개서 각 파트를 빈칸으로
+  // 예: "로마서 3:23" → ["로마서", "3:23"]
+  // 예: "빌립보서 4:6-7" → ["빌립보서", "4:6-7"]
+  var parts = ref.split(' ');
+  blankAnswers = parts;
+  currentFillBlankIdx = 0;
+  blanks = parts.map(function(_, i){ return i; });
+
+  var html = '';
+  parts.forEach(function(p, i) {
+    var width = Math.max(80, p.length * 26) + 'px';
+    html += '<span class="blank ref-blank" id="blank-'+i+'">'
+          + '<input class="blank-input" id="blank-input-'+i+'" type="text" style="width:'+width+';font-size:26px;" placeholder="___" />'
+          + '</span>';
+    if (i < parts.length - 1) html += ' ';
+  });
+  return html;
+}
+
+// ─── 선택지 모드 ──────────────────────────────────────────
+function renderChoiceMode(verseObj) {
+  var words = verseObj.text.split(' ');
+  var blankIndices = [];
+  var step = Math.max(2, Math.floor(words.length / Math.max(2, Math.floor(words.length * 0.35))));
+  for (var i = 1; i < words.length; i += step) {
+    if (words[i].length >= 2) blankIndices.push(i);
+    if (blankIndices.length >= 5) break;
+  }
+  if (blankIndices.length < 2) blankIndices = [1, Math.floor(words.length/2)];
+
+  blankAnswers = blankIndices.map(function(i){ return words[i]; });
+
+  var html = '';
+  words.forEach(function(w, i) {
+    if (blankIndices.indexOf(i) !== -1) {
+      var bIdx = blankIndices.indexOf(i);
+      var width = Math.max(60, w.length * 22) + 'px';
+      html += '<span class="blank" id="blank-'+bIdx+'"><span class="blank-input" id="blank-input-'+bIdx+'" style="display:inline-block;min-width:'+width+';color:#1976D2"> ? </span></span> ';
+    } else {
+      html += w + ' ';
+    }
+  });
+  document.getElementById('verse-display').innerHTML = html;
+
+  // 선택지 생성
+  var correctWords = blankAnswers.slice();
+  var wrongPool = getWrongWords(verseObj, correctWords);
+  var choiceWords = correctWords.concat(wrongPool.slice(0, Math.max(2, 6 - correctWords.length)));
+  choiceWords = shuffle(choiceWords);
+
+  var choicesArea = document.getElementById('choices-area');
+  choicesArea.innerHTML = '';
+  choiceWords.forEach(function(w) {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'choice-btn';
+    btn.textContent = w;
+    btn.onclick = (function(word, el){ return function(){ selectChoice(word, el); }; })(w, btn);
+    choicesArea.appendChild(btn);
+  });
+
+  currentChoiceTarget = 0;
+  highlightCurrentBlank();
+}
+
+function getWrongWords(verseObj, correctWords) {
+  var pool = [];
+  VERSES.forEach(function(v) {
+    v.text.split(' ').forEach(function(w) {
+      if (w.length >= 2 && correctWords.indexOf(w) === -1 && pool.indexOf(w) === -1) pool.push(w);
+    });
+  });
+  return shuffle(pool);
+}
+
+function highlightCurrentBlank() {
+  for (var i = 0; i < blankAnswers.length; i++) {
+    var el = document.getElementById('blank-'+i);
+    if (!el) continue;
+    el.style.borderColor = (i === currentChoiceTarget) ? '#FF6F00' : '';
+  }
+}
+
+function selectChoice(word, btn) {
+  if (answered) return;
+  if (currentChoiceTarget >= blankAnswers.length) return;
+
+  var targetEl = document.getElementById('blank-input-'+currentChoiceTarget);
+  var blankEl = document.getElementById('blank-'+currentChoiceTarget);
+  var correct = blankAnswers[currentChoiceTarget];
+
+  targetEl.textContent = word;
+
+  if (word === correct) {
+    blankEl.className = 'blank correct';
+    btn.classList.add('correct-choice');
+    showStarPop(btn);
+  } else {
+    blankEl.className = 'blank wrong';
+    btn.classList.add('wrong-choice');
+    // 정답 보여주기
+    targetEl.textContent = correct + ' ✓';
+    blankEl.className = 'blank correct';
+    setTimeout(function(){ btn.classList.remove('wrong-choice'); }, 800);
+  }
+
+  btn.classList.add('used');
+  currentChoiceTarget++;
+
+  if (currentChoiceTarget >= blankAnswers.length) {
+    // 모두 채움
+    setTimeout(function(){
+      answered = true;
+      var allCorrect = true;
+      // 체크
+      blankAnswers.forEach(function(ans, i) {
+        var el = document.getElementById('blank-input-'+i);
+        var val = el ? el.textContent.replace(' ✓','').trim() : '';
+        if (val !== ans) allCorrect = false;
+      });
+      showResult(allCorrect);
+    }, 400);
+  } else {
+    highlightCurrentBlank();
+  }
+}
+
+// ─── 정답 확인 ────────────────────────────────────────────
+function checkAnswer() {
+  if (answered) return;
+  answered = true;
+
+  var allCorrect = true;
+  blankAnswers.forEach(function(ans, i) {
+    var inputEl = document.getElementById('blank-input-'+i);
+    var blankEl = document.getElementById('blank-'+i);
+    if (!inputEl || !blankEl) return;
+    var val = inputEl.value.trim();
+    if (val === ans) {
+      blankEl.classList.add('correct');
+    } else {
+      blankEl.classList.add('wrong');
+      inputEl.value = ans;
+      allCorrect = false;
+    }
+  });
+
+  // ref-fill 모드이면 정답 공개
+  if (currentMode === 'ref-fill') {
+    var verseObj = filteredVerses[queuedVerses[currentVerseIdx]];
+    document.getElementById('ref-badge').textContent = verseObj.ref;
+    document.getElementById('ref-badge').style.color = '';
+  }
+
+  showResult(allCorrect);
+}
+
+function showResult(ok) {
+  var msg = document.getElementById('result-msg');
+  scoreDone++;
+
+  if (ok) {
+    scoreCorrect++;
+    scoreStars += 3;
+    msg.textContent = '🌟 완벽해요! 정말 잘했어요! 🎉';
+    msg.className = 'result-msg success show';
+    showStarPopCenter();
+  } else {
+    msg.textContent = '💪 괜찮아요! 다시 도전해 봐요!';
+    msg.className = 'result-msg fail show';
+  }
+
+  updateScores();
+}
+
+function updateScores() {
+  document.getElementById('score-correct').textContent = scoreCorrect;
+  document.getElementById('score-done').textContent = scoreDone;
+  document.getElementById('score-stars').textContent = scoreStars;
+}
+
+// ─── 힌트 ─────────────────────────────────────────────────
+function showHint() {
+  if (currentMode === 'fill' || currentMode === 'ref-fill') {
+    blankAnswers.forEach(function(ans, i) {
+      var inputEl = document.getElementById('blank-input-'+i);
+      if (inputEl && (!inputEl.value || inputEl.value.trim() === '')) {
+        inputEl.value = ans[0] + '...';
+        inputEl.style.color = '#FF6F00';
+      }
+    });
+  } else if (currentMode === 'choice') {
+    // 현재 빈칸의 정답 강조
+    var ans = blankAnswers[currentChoiceTarget];
+    document.querySelectorAll('.choice-btn').forEach(function(btn) {
+      if (btn.textContent === ans) {
+        btn.style.background = '#FFF9C4';
+        btn.style.borderColor = '#F9A825';
+      }
+    });
+  }
+}
+
+// ─── 다음 구절 ────────────────────────────────────────────
+function nextVerse() {
+  if (queuedVerses.length > 1) {
+    currentVerseIdx++;
+    if (currentVerseIdx >= queuedVerses.length) {
+      showFinish();
+      return;
+    }
+  }
+  answered = false;
+  renderCurrentVerse();
+}
+
+function resetCard() {
+  answered = false;
+  renderCurrentVerse();
+}
+
+function updateProgress() {
+  if (queuedVerses.length <= 1) {
+    document.getElementById('progress-fill').style.width = '100%';
+    return;
+  }
+  var pct = Math.round((currentVerseIdx / queuedVerses.length) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+
+// ─── 완료 화면 ────────────────────────────────────────────
+function showFinish() {
+  document.getElementById('main-card').style.display = 'none';
+  document.getElementById('mode-badge').style.display = 'none';
+  document.getElementById('progress-bar').style.display = 'none';
+  document.getElementById('finish-screen').classList.add('show');
+  document.getElementById('finish-score').textContent =
+    '맞춘 구절: ' + scoreCorrect + ' / ' + scoreDone + '  |  별 점수: ' + scoreStars + '⭐';
+}
+
+function restartAll() {
+  scoreCorrect = 0; scoreDone = 0; scoreStars = 0;
+  updateScores();
+  selectGroup(currentGroup);
+}
+
+// ─── 별 팝 애니메이션 ─────────────────────────────────────
+function showStarPop(refEl) {
+  var rect = refEl ? refEl.getBoundingClientRect() : { left: window.innerWidth/2, top: window.innerHeight/2 };
+  var stars = ['⭐','🌟','✨'];
+  for (var k = 0; k < 3; k++) {
+    (function(kk){ setTimeout(function(){
+      var el = document.createElement('div');
+      el.className = 'star-pop';
+      el.textContent = stars[kk % stars.length];
+      el.style.left = (rect.left + Math.random() * 60 - 20) + 'px';
+      el.style.top  = (rect.top  + Math.random() * 20) + 'px';
+      document.body.appendChild(el);
+      setTimeout(function(){ el.remove(); }, 1000);
+    }, kk * 150); })(k);
+  }
+}
+
+function showStarPopCenter() {
+  var fakeEl = { getBoundingClientRect: function(){ return { left: window.innerWidth/2 - 40, top: window.innerHeight/2 }; }};
+  showStarPop(fakeEl.getBoundingClientRect ? fakeEl : null);
+}
+
+// ─── 다운로드 ─────────────────────────────────────────────
+function downloadApp() {
+  var html = document.documentElement.outerHTML;
+  var blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'index.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// ─── 시작 ─────────────────────────────────────────────────
+init();
+</script>
+
+
+</body></html>
