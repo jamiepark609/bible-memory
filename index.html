@@ -1,8 +1,10 @@
-<html lang="ko"><head>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>성경암송 연습 🌟</title>
-<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&amp;family=Nanum+Pen+Script&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Nanum+Pen+Script&display=swap" rel="stylesheet">
 <style>
   :root {
     --sky: #4FC3F7;
@@ -69,10 +71,26 @@
     line-height: 1.2;
   }
 
+  .header .subtitle2 {
+    font-size: 20px;
+    color: var(--sky);
+    margin-top: 2px;
+    font-family: 'Nanum Pen Script', cursive;
+    letter-spacing: 2px;
+  }
+
   .header .subtitle {
     font-size: 22px;
     color: var(--blue);
     margin-top: 4px;
+  }
+
+  .header .subtitle2 {
+    font-size: 20px;
+    color: var(--deep);
+    font-family: 'Nanum Pen Script', cursive;
+    margin-top: 2px;
+    letter-spacing: 2px;
   }
 
   .stars {
@@ -335,6 +353,37 @@
   .btn-mode  { background: linear-gradient(135deg, #26C6DA, #00838F); color: white; }
   .btn-nextblank { background: linear-gradient(135deg, #FF8A65, #D84315); color: white; }
 
+  /* 소단락 필터 버튼 */
+  .subtopic-btn {
+    font-family: 'Gaegu', cursive;
+    font-size: 16px;
+    padding: 7px 16px;
+    background: white;
+    border: 2px solid var(--sky);
+    border-radius: 20px;
+    color: var(--blue);
+    cursor: pointer;
+    -webkit-appearance: none;
+    transition: all 0.2s;
+  }
+  .subtopic-btn.active {
+    background: var(--blue);
+    color: white;
+    border-color: var(--deep);
+    box-shadow: 0 3px 0 var(--deep);
+  }
+
+  /* 정답 후 다음 버튼 강조 */
+  .btn-next-highlight {
+    background: linear-gradient(135deg, #FFD600, #FF6F00) !important;
+    animation: pulse 0.8s infinite alternate;
+    font-size: 24px !important;
+  }
+  @keyframes pulse {
+    from { transform: scale(1); box-shadow: 0 5px 0 rgba(0,0,0,0.15); }
+    to   { transform: scale(1.07); box-shadow: 0 8px 16px rgba(255,111,0,0.4); }
+  }
+
   /* ref-fill 빈칸 크기 */
   .ref-blank {
     border-bottom: 3px solid #1976D2;
@@ -450,7 +499,8 @@
   <!-- 헤더 -->
   <div class="header">
     <h1>✝️ 성경암송 연습 🌟</h1>
-    <div class="subtitle">사랑의교회 성경암송 A-C</div>
+    <div class="subtitle">사랑의교회 소년부 성경암송 골든벨</div>
+    <div class="subtitle2">&lt; A-C 파트 &gt;</div>
     <span class="stars">⭐ ⭐ ⭐</span>
     <div style="margin-top:12px;">
       <button type="button" onclick="downloadApp()" style="font-family:'Gaegu',cursive;font-size:18px;padding:10px 24px;background:linear-gradient(135deg,#43A047,#1B5E20);color:white;border:none;border-radius:30px;cursor:pointer;box-shadow:0 4px 0 #1B5E20;-webkit-appearance:none;">
@@ -484,9 +534,10 @@
   </div>
 
   <!-- 구절 선택 -->
-  <div class="verse-selector" id="verse-selector" style="display: block;">
+  <div class="verse-selector" id="verse-selector">
     <h2>📖 암송할 구절을 골라요!</h2>
-    <div class="verse-grid" id="verse-grid"><button type="button" class="verse-item"><span class="ref">고린도후서 5:17</span>중심되신 그리스도</button><button type="button" class="verse-item"><span class="ref">갈라디아서 2:20</span>중심되신 그리스도</button><button type="button" class="verse-item"><span class="ref">로마서 12:1</span>그리스도께 순종</button><button type="button" class="verse-item"><span class="ref">요한복음 14:21</span>그리스도께 순종</button><button type="button" class="verse-item"><span class="ref">디모데후서 3:16</span>말씀</button><button type="button" class="verse-item"><span class="ref">여호수아 1:8</span>말씀</button><button type="button" class="verse-item"><span class="ref">요한복음 15:7</span>기도</button><button type="button" class="verse-item"><span class="ref">빌립보서 4:6-7</span>기도</button><button type="button" class="verse-item"><span class="ref">마태복음 18:20</span>교제</button><button type="button" class="verse-item"><span class="ref">히브리서 10:24-25</span>교제</button><button type="button" class="verse-item"><span class="ref">마태복음 4:19</span>증거</button><button type="button" class="verse-item"><span class="ref">로마서 1:16</span>증거</button><button type="button" class="verse-item" style="background: linear-gradient(135deg, rgb(227, 242, 253), rgb(187, 222, 251)); border-color: rgb(25, 118, 210);">🎲 랜덤으로 풀기!</button></div>
+    <div id="subtopic-btns" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;"></div>
+    <div class="verse-grid" id="verse-grid"></div>
   </div>
 
   <!-- 모드 선택 배지 -->
@@ -525,10 +576,14 @@
 
   <!-- 완료 화면 -->
   <div class="finish-screen" id="finish-screen">
-    <div class="big-stars">🌟🌟🌟</div>
-    <h2>잘했어요! 🎉</h2>
+    <div class="big-stars" id="finish-stars">🌟🌟🌟</div>
+    <h2 id="finish-title">잘했어요! 🎉</h2>
     <div class="finish-score" id="finish-score"></div>
-    <button type="button" class="btn btn-next" style="font-size:24px;padding:14px 40px;margin-top:10px;" onclick="restartAll()">🔄 처음부터 다시!</button>
+    <div id="finish-level-info" style="font-size:22px;color:var(--blue);margin:10px 0;"></div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:14px;">
+      <button type="button" class="btn btn-next" id="btn-levelup" style="font-size:24px;padding:14px 36px;" onclick="levelUp()">🚀 다음 단계로!</button>
+      <button type="button" class="btn btn-reset" style="font-size:20px;padding:12px 24px;" onclick="restartAll()">🔄 처음부터</button>
+    </div>
   </div>
 
 </div>
@@ -617,7 +672,11 @@ var VERSES = [
 
 // ─── 상태 ────────────────────────────────────────────────
 var currentGroup = 'A';
-var currentMode = 'fill'; // 'fill' | 'choice' | 'ref-fill' | 'view'
+var currentMode = 'fill';
+// 레벨 시스템: stage(1~4) × group(A→B→C)
+var currentStage = 1; // 1=빈칸채우기, 2=선택지, 3=구절찾기, 4=전체암송(완전빈칸)
+var stageGroups = ['A','B','C'];
+var stageGroupIdx = 0; // 현재 그룹 인덱스 // 'fill' | 'choice' | 'ref-fill' | 'view'
 var currentFillBlankIdx = 0; // 빈칸 채우기에서 현재 포커스 빈칸
 var currentVerseIdx = -1;
 var filteredVerses = [];
@@ -659,12 +718,58 @@ function selectGroup(g) {
 function renderVerseGrid() {
   var grid = document.getElementById('verse-grid');
   grid.innerHTML = '';
-  filteredVerses.forEach(function(v, i) {
+
+  // 소단락 필터 버튼 생성
+  var subtopicArea = document.getElementById('subtopic-btns');
+  subtopicArea.innerHTML = '';
+
+  // 전체 버튼
+  var allBtn = document.createElement('button');
+  allBtn.type = 'button';
+  allBtn.className = 'subtopic-btn active';
+  allBtn.textContent = '전체';
+  allBtn.onclick = function() { filterBySubtopic(null); };
+  subtopicArea.appendChild(allBtn);
+
+  // 소단락 목록 추출 (중복 제거)
+  var topics = [];
+  filteredVerses.forEach(function(v) {
+    if (topics.indexOf(v.topic) === -1) topics.push(v.topic);
+  });
+  topics.forEach(function(topic) {
+    var label = topic.split('. ').slice(1).join('. ');
+    var tBtn = document.createElement('button');
+    tBtn.type = 'button';
+    tBtn.className = 'subtopic-btn';
+    tBtn.textContent = topic.split('.')[0] + '. ' + label;
+    tBtn.onclick = (function(t){ return function(){ filterBySubtopic(t); }; })(topic);
+    subtopicArea.appendChild(tBtn);
+  });
+
+  renderVerseItems(filteredVerses);
+}
+
+function filterBySubtopic(topic) {
+  // 버튼 활성화 표시
+  document.querySelectorAll('.subtopic-btn').forEach(function(b) {
+    b.classList.remove('active');
+    if (topic === null && b.textContent === '전체') b.classList.add('active');
+    else if (b.textContent.indexOf(topic ? topic.split('.')[0] : '') === 0 && topic !== null) b.classList.add('active');
+  });
+  var verses = topic ? filteredVerses.filter(function(v){ return v.topic === topic; }) : filteredVerses;
+  renderVerseItems(verses);
+}
+
+function renderVerseItems(verses) {
+  var grid = document.getElementById('verse-grid');
+  grid.innerHTML = '';
+  verses.forEach(function(v, i) {
+    var globalIdx = filteredVerses.indexOf(v);
     var btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'verse-item';
     btn.innerHTML = '<span class="ref">' + v.ref + '</span>' + v.topic.split('. ').slice(1).join('. ');
-    btn.onclick = (function(idx){ return function(){ startWithVerse(idx); }; })(i);
+    btn.onclick = (function(idx){ return function(){ startWithVerse(idx); }; })(globalIdx);
     grid.appendChild(btn);
   });
 
@@ -680,7 +785,27 @@ function renderVerseGrid() {
 }
 
 function startWithVerse(idx) {
-  queuedVerses = [idx];
+  // 선택한 구절의 소단락 파악
+  var selectedVerse = filteredVerses[idx];
+  var selectedTopic = selectedVerse.topic;
+
+  // 전체 소단락 목록 (순서 유지)
+  var allTopics = [];
+  filteredVerses.forEach(function(v) {
+    if (allTopics.indexOf(v.topic) === -1) allTopics.push(v.topic);
+  });
+
+  // 선택한 소단락부터 시작해서 순서대로 모든 구절 큐에 넣기
+  var startTopicIdx = allTopics.indexOf(selectedTopic);
+  var orderedTopics = allTopics.slice(startTopicIdx).concat(allTopics.slice(0, startTopicIdx));
+
+  queuedVerses = [];
+  orderedTopics.forEach(function(topic) {
+    filteredVerses.forEach(function(v, i) {
+      if (v.topic === topic) queuedVerses.push(i);
+    });
+  });
+
   currentVerseIdx = 0;
   showVerse();
 }
@@ -732,7 +857,8 @@ function updateModeLabel() {
     'ref-fill':'📖 구절 찾기 모드',
     view:     '👀 전체 보기 모드'
   };
-  document.getElementById('mode-label').textContent = labels[currentMode];
+  var stageLabel = currentStage > 0 ? ' [' + currentStage + '단계 / ' + currentGroup + '파트]' : '';
+  document.getElementById('mode-label').textContent = (labels[currentMode] || currentMode) + stageLabel;
 }
 
 function toggleMode() {
@@ -1023,7 +1149,7 @@ function checkAnswer() {
   if (answered) return;
   answered = true;
 
-  var allCorrect = true;
+  var correctCount = 0;
   blankAnswers.forEach(function(ans, i) {
     var inputEl = document.getElementById('blank-input-'+i);
     var blankEl = document.getElementById('blank-'+i);
@@ -1031,10 +1157,10 @@ function checkAnswer() {
     var val = inputEl.value.trim();
     if (val === ans) {
       blankEl.classList.add('correct');
+      correctCount++;
     } else {
       blankEl.classList.add('wrong');
-      inputEl.value = ans;
-      allCorrect = false;
+      inputEl.value = ans; // 정답 보여주기
     }
   });
 
@@ -1045,25 +1171,103 @@ function checkAnswer() {
     document.getElementById('ref-badge').style.color = '';
   }
 
-  showResult(allCorrect);
+  // 80% 이상이면 통과
+  var ratio = blankAnswers.length > 0 ? correctCount / blankAnswers.length : 1;
+  var passed = (ratio >= 0.8);
+  showResult(passed, correctCount, blankAnswers.length);
 }
 
-function showResult(ok) {
+function showResult(ok, correctCount, totalCount) {
   var msg = document.getElementById('result-msg');
   scoreDone++;
 
-  if (ok) {
+  // correctCount/totalCount가 없으면 blankAnswers에서 직접 계산
+  if (correctCount === undefined) {
+    correctCount = 0;
+    totalCount = blankAnswers.length;
+    blankAnswers.forEach(function(ans, i) {
+      var inputEl = document.getElementById('blank-input-'+i);
+      if (!inputEl) return;
+      var val = (inputEl.value !== undefined ? inputEl.value : inputEl.textContent).trim().replace(' ✓','');
+      if (val === ans) correctCount++;
+    });
+  }
+  var pct = totalCount > 0 ? Math.round(correctCount / totalCount * 100) : (ok ? 100 : 0);
+  var passed = ok || (pct >= 80);
+
+  if (passed) {
     scoreCorrect++;
-    scoreStars += 3;
-    msg.textContent = '🌟 완벽해요! 정말 잘했어요! 🎉';
+    scoreStars += (pct === 100 ? 3 : 2);
+    if (pct === 100) {
+      msg.textContent = '🌟 완벽해요! 정말 잘했어요! 🎉';
+    } else {
+      msg.textContent = '👍 ' + pct + '% 통과! 정답 확인하고 다음으로 넘어가요 😊';
+    }
     msg.className = 'result-msg success show';
     showStarPopCenter();
+    var nextBtn = document.getElementById('btn-next');
+    nextBtn.classList.add('btn-next-highlight');
+    nextBtn.textContent = '다음 구절 ➡️';
+    // 3초 후 소단락 순서로 자동 이동
+    setTimeout(function() {
+      if (answered) nextVerseInOrder();
+    }, 3000);
   } else {
-    msg.textContent = '💪 괜찮아요! 다시 도전해 봐요!';
+    msg.textContent = '💪 ' + pct + '% - 80% 이상이면 통과예요! 다시 도전해봐요!';
     msg.className = 'result-msg fail show';
   }
 
   updateScores();
+}
+
+// 소단락 순서대로 다음 구절 이동 (A-1 두 구절 → A-2 → ...)
+function nextVerseInOrder() {
+  var nextBtn = document.getElementById('btn-next');
+  if (nextBtn) { nextBtn.classList.remove('btn-next-highlight'); nextBtn.textContent = '다음 ➡️'; }
+
+  var curGlobalIdx = queuedVerses[currentVerseIdx];
+  var curVerse = filteredVerses[curGlobalIdx];
+  var curTopic = curVerse ? curVerse.topic : '';
+
+  // 전체 소단락 목록
+  var topics = [];
+  filteredVerses.forEach(function(v) { if (topics.indexOf(v.topic) === -1) topics.push(v.topic); });
+
+  // 같은 소단락 내 다른 구절
+  var sameTopicOther = [];
+  filteredVerses.forEach(function(v, i) {
+    if (v.topic === curTopic && i !== curGlobalIdx) sameTopicOther.push(i);
+  });
+
+  var nextIdx;
+  if (sameTopicOther.length > 0) {
+    // 같은 소단락의 다른 구절로
+    nextIdx = sameTopicOther[0];
+  } else {
+    // 다음 소단락 첫 구절로
+    var curTopicIdx = topics.indexOf(curTopic);
+    var nextTopicIdx = (curTopicIdx + 1) % topics.length;
+    var nextTopic = topics[nextTopicIdx];
+    filteredVerses.forEach(function(v, i) {
+      if (v.topic === nextTopic && nextIdx === undefined) nextIdx = i;
+    });
+  }
+
+  // 한 바퀴 다 돌았는지 체크 (다음 소단락이 처음 소단락이면 파트 완료)
+  var curTopicIdx2 = topics.indexOf(curTopic);
+  var wrappedAround = (sameTopicOther.length === 0 && curTopicIdx2 === topics.length - 1);
+  if (wrappedAround) {
+    // 파트(그룹) 완료 → showFinish
+    showFinish();
+    return;
+  }
+
+  if (nextIdx === undefined) nextIdx = 0;
+  queuedVerses = [nextIdx];
+  currentVerseIdx = 0;
+  answered = false;
+  renderCurrentVerse();
+  updateProgress();
 }
 
 function updateScores() {
@@ -1096,13 +1300,28 @@ function showHint() {
 
 // ─── 다음 구절 ────────────────────────────────────────────
 function nextVerse() {
+  var nextBtn = document.getElementById('btn-next');
+  if (nextBtn) { nextBtn.classList.remove('btn-next-highlight'); nextBtn.textContent = '다음 ➡️'; }
+
   if (queuedVerses.length > 1) {
+    var prevTopic = filteredVerses[queuedVerses[currentVerseIdx]].topic;
     currentVerseIdx++;
     if (currentVerseIdx >= queuedVerses.length) {
       showFinish();
       return;
     }
+    var nextTopic = filteredVerses[queuedVerses[currentVerseIdx]].topic;
+    // 소단락이 바뀌면 잠깐 안내
+    if (prevTopic !== nextTopic) {
+      var card = document.getElementById('main-card');
+      var notice = document.createElement('div');
+      notice.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#0D47A1;color:white;font-family:Nanum Pen Script,cursive;font-size:32px;padding:24px 40px;border-radius:24px;z-index:999;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.3);';
+      notice.innerHTML = '📖 다음 단락으로!<br><span style="font-size:24px;">' + nextTopic + '</span>';
+      document.body.appendChild(notice);
+      setTimeout(function(){ notice.remove(); }, 1800);
+    }
   }
+
   answered = false;
   renderCurrentVerse();
 }
@@ -1121,6 +1340,15 @@ function updateProgress() {
   document.getElementById('progress-fill').style.width = pct + '%';
 }
 
+// ─── 레벨/단계 정보 ──────────────────────────────────────
+var STAGE_NAMES = {
+  1: '✏️ 1단계: 빈칸 채우기',
+  2: '🎯 2단계: 선택지 고르기',
+  3: '📖 3단계: 구절 찾기',
+  4: '🏆 4단계: 완전 암송!'
+};
+var STAGE_MODES = { 1:'fill', 2:'choice', 3:'ref-fill', 4:'full-blank' };
+
 // ─── 완료 화면 ────────────────────────────────────────────
 function showFinish() {
   document.getElementById('main-card').style.display = 'none';
@@ -1129,12 +1357,90 @@ function showFinish() {
   document.getElementById('finish-screen').classList.add('show');
   document.getElementById('finish-score').textContent =
     '맞춘 구절: ' + scoreCorrect + ' / ' + scoreDone + '  |  별 점수: ' + scoreStars + '⭐';
+
+  // 다음 단계 정보 표시
+  var nextGroup = stageGroups[stageGroupIdx + 1];
+  var nextStage = currentStage + 1;
+  var levelInfo = '';
+  var btnText = '🚀 다음 단계로!';
+  var stars = '🌟🌟🌟';
+  var title = '';
+
+  if (stageGroupIdx < stageGroups.length - 1) {
+    // 같은 단계, 다음 그룹
+    levelInfo = '지금: ' + STAGE_NAMES[currentStage] + ' / ' + stageGroups[stageGroupIdx] + ' 파트 완료!
+→ 다음: ' + stageGroups[stageGroupIdx+1] + ' 파트로!';
+    btnText = '➡️ ' + stageGroups[stageGroupIdx+1] + ' 파트로!';
+    title = stageGroups[stageGroupIdx] + ' 파트 완료! 🎉';
+    stars = '⭐⭐⭐';
+  } else if (currentStage < 4) {
+    // 다음 단계로
+    levelInfo = stageGroups[stageGroupIdx] + ' 파트까지 완료!
+→ 더 어려운 ' + STAGE_NAMES[nextStage] + ' 시작!';
+    btnText = '🚀 ' + STAGE_NAMES[nextStage] + ' 시작!';
+    title = '단계 완료! 레벨업! 🎊';
+    stars = '🌟🌟🌟';
+  } else {
+    // 모든 단계 완료!
+    levelInfo = '모든 단계를 완료했어요! 진짜 골든벨 도전자!';
+    btnText = '🏆 처음부터 다시!';
+    title = '🏆 골든벨 완전 정복! 🏆';
+    stars = '🏆🌟🏆';
+    document.getElementById('btn-levelup').onclick = function(){ restartAll(); };
+  }
+
+  document.getElementById('finish-stars').textContent = stars;
+  document.getElementById('finish-title').textContent = title || '파트 완료!';
+  document.getElementById('finish-level-info').textContent = levelInfo;
+  document.getElementById('btn-levelup').textContent = btnText;
+}
+
+function levelUp() {
+  document.getElementById('finish-screen').classList.remove('show');
+
+  if (stageGroupIdx < stageGroups.length - 1) {
+    // 같은 단계, 다음 그룹
+    stageGroupIdx++;
+    currentGroup = stageGroups[stageGroupIdx];
+    currentMode = STAGE_MODES[currentStage];
+  } else if (currentStage < 4) {
+    // 다음 단계, A 그룹부터
+    currentStage++;
+    stageGroupIdx = 0;
+    currentGroup = 'A';
+    currentMode = STAGE_MODES[currentStage];
+    // 4단계는 full-blank가 없으니 fill로
+    if (currentMode === 'full-blank') currentMode = 'fill';
+  } else {
+    restartAll();
+    return;
+  }
+
+  updateModeLabel();
+  filteredVerses = VERSES.filter(function(v){ return v.group === currentGroup; });
+
+  // 탭 활성화
+  document.querySelectorAll('.tab-btn').forEach(function(b,i) {
+    var groups = ['A','B','C','ALL'];
+    b.classList.toggle('active', groups[i] === currentGroup);
+  });
+
+  // 해당 그룹 전체 구절을 순서대로 큐에 넣기
+  queuedVerses = filteredVerses.map(function(_,i){ return i; });
+  currentVerseIdx = 0;
+  answered = false;
+  showVerse();
 }
 
 function restartAll() {
   scoreCorrect = 0; scoreDone = 0; scoreStars = 0;
+  currentStage = 1;
+  stageGroupIdx = 0;
+  currentGroup = 'A';
+  currentMode = 'fill';
   updateScores();
-  selectGroup(currentGroup);
+  document.getElementById('finish-screen').classList.remove('show');
+  selectGroup('A');
 }
 
 // ─── 별 팝 애니메이션 ─────────────────────────────────────
@@ -1176,6 +1482,5 @@ function downloadApp() {
 // ─── 시작 ─────────────────────────────────────────────────
 init();
 </script>
-
-
-</body></html>
+</body>
+</html>
