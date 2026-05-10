@@ -678,7 +678,8 @@ var currentMode = 'fill';
 // 레벨 시스템: stage(1~4) × group(A→B→C)
 var currentStage = 1; // 1=빈칸채우기, 2=선택지, 3=구절찾기, 4=전체암송(완전빈칸)
 var stageGroups = ['A','B','C'];
-var stageGroupIdx = 0; // 현재 그룹 인덱스 // 'fill' | 'choice' | 'ref-fill' | 'view'
+var stageGroupIdx = 0; // 현재 그룹 인덱스
+var completedVerseIndices = []; // 이미 완료한 구절 인덱스 목록 // 'fill' | 'choice' | 'ref-fill' | 'view'
 var currentFillBlankIdx = 0; // 빈칸 채우기에서 현재 포커스 빈칸
 var currentVerseIdx = -1;
 var filteredVerses = [];
@@ -1231,40 +1232,51 @@ function nextVerseInOrder() {
   var curVerse = filteredVerses[curGlobalIdx];
   var curTopic = curVerse ? curVerse.topic : '';
 
-  // 전체 소단락 목록
+  // 현재 구절을 완료 목록에 추가
+  if (completedVerseIndices.indexOf(curGlobalIdx) === -1) {
+    completedVerseIndices.push(curGlobalIdx);
+  }
+
+  // 전체 소단락 목록 (순서대로)
   var topics = [];
   filteredVerses.forEach(function(v) { if (topics.indexOf(v.topic) === -1) topics.push(v.topic); });
 
-  // 같은 소단락 내 다른 구절
-  var sameTopicOther = [];
+  // 같은 소단락 내 아직 안 푼 구절
+  var sameTopicRemaining = [];
   filteredVerses.forEach(function(v, i) {
-    if (v.topic === curTopic && i !== curGlobalIdx) sameTopicOther.push(i);
+    if (v.topic === curTopic && completedVerseIndices.indexOf(i) === -1) {
+      sameTopicRemaining.push(i);
+    }
   });
 
   var nextIdx;
-  if (sameTopicOther.length > 0) {
-    // 같은 소단락의 다른 구절로
-    nextIdx = sameTopicOther[0];
+  if (sameTopicRemaining.length > 0) {
+    // 같은 소단락에 아직 안 푼 구절 있으면 그리로
+    nextIdx = sameTopicRemaining[0];
   } else {
-    // 다음 소단락 첫 구절로
+    // 이 소단락 완료 → 다음 소단락 첫 번째 안 푼 구절로
     var curTopicIdx = topics.indexOf(curTopic);
-    var nextTopicIdx = (curTopicIdx + 1) % topics.length;
-    var nextTopic = topics[nextTopicIdx];
-    filteredVerses.forEach(function(v, i) {
-      if (v.topic === nextTopic && nextIdx === undefined) nextIdx = i;
-    });
+    var found = false;
+    for (var t = curTopicIdx + 1; t < topics.length; t++) {
+      var topic = topics[t];
+      filteredVerses.forEach(function(v, i) {
+        if (!found && v.topic === topic && completedVerseIndices.indexOf(i) === -1) {
+          nextIdx = i;
+          found = true;
+        }
+      });
+      if (found) break;
+    }
+
+    // 다음 소단락도 없으면 파트 전체 완료
+    if (!found) {
+      completedVerseIndices = []; // 초기화
+      showFinish();
+      return;
+    }
   }
 
-  // 한 바퀴 다 돌았는지 체크 (다음 소단락이 처음 소단락이면 파트 완료)
-  var curTopicIdx2 = topics.indexOf(curTopic);
-  var wrappedAround = (sameTopicOther.length === 0 && curTopicIdx2 === topics.length - 1);
-  if (wrappedAround) {
-    // 파트(그룹) 완료 → showFinish
-    showFinish();
-    return;
-  }
-
-  if (nextIdx === undefined) nextIdx = 0;
+  if (nextIdx === undefined) { showFinish(); return; }
   queuedVerses = [nextIdx];
   currentVerseIdx = 0;
   answered = false;
@@ -1469,6 +1481,7 @@ function levelUp() {
   }
 
   updateModeLabel();
+  completedVerseIndices = [];
   filteredVerses = VERSES.filter(function(v){ return v.group === currentGroup; });
 
   // 탭 활성화
@@ -1490,6 +1503,7 @@ function restartAll() {
   stageGroupIdx = 0;
   currentGroup = 'A';
   currentMode = 'fill';
+  completedVerseIndices = [];
   updateScores();
   document.getElementById('finish-screen').classList.remove('show');
   selectGroup('A');
