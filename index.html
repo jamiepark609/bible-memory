@@ -351,6 +351,7 @@
   .btn-hint  { background: linear-gradient(135deg, #FFA726, #E65100); color: white; }
   .btn-reset { background: linear-gradient(135deg, #AB47BC, #6A1B9A); color: white; }
   .btn-mode  { background: linear-gradient(135deg, #26C6DA, #00838F); color: white; }
+  .btn-prev { background: linear-gradient(135deg, #90CAF9, #1565C0); color: white; }
   .btn-nextblank { background: linear-gradient(135deg, #FF8A65, #D84315); color: white; }
 
   /* 소단락 필터 버튼 */
@@ -566,6 +567,7 @@
     <div class="result-msg" id="result-msg"></div>
 
     <div class="btn-row">
+      <button type="button" class="btn btn-prev" id="btn-prev" onclick="prevVerse()">⬅️ 이전</button>
       <button type="button" class="btn btn-check" id="btn-check" onclick="checkAnswer()" style="display:none">✅ 확인!</button>
       <button type="button" class="btn btn-nextblank" id="btn-next-blank" onclick="moveFillFocus(currentFillBlankIdx+1)" style="display:none">다음칸 ➡️</button>
       <button type="button" class="btn btn-hint" onclick="showHint()">💡 힌트</button>
@@ -595,9 +597,9 @@ var VERSES = [
   { group:'A', topic:'A-1. 중심되신 그리스도', ref:'고린도후서 5:17',
     text:'그런즉 누구든지 그리스도 안에 있으면 새로운 피조물이라 이전 것은 지나갔으니 보라 새 것이 되었도다' },
   { group:'A', topic:'A-1. 중심되신 그리스도', ref:'갈라디아서 2:20',
-    text:'내가 그리스도와 함께 십자가에 못박혔나니 그런즉 이제는 내가 사는 것이 아니요 오직 내 안에 그리스도께서 사시는 것이라' },
+    text:'내가 그리스도와 함께 십자가에 못박혔나니 그런즉 이제는 내가 사는 것이 아니요 오직 내 안에 그리스도께서 사시는 것이라 이제 내가 육체 가운데 사는 것은 나를 사랑하사 나를 위하여 자기 자신을 버리신 하나님의 아들을 믿는 믿음 안에서 사는 것이라' },
   { group:'A', topic:'A-2. 그리스도께 순종', ref:'로마서 12:1',
-    text:'너희 몸을 하나님이 기뻐하시는 거룩한 산 제물로 드리라 이는 너희가 드릴 영적 예배니라' },
+    text:'그러므로 형제들아 내가 하나님의 모든 자비하심으로 너희를 권하노니 너희 몸을 하나님이 기뻐하시는 거룩한 산 제물로 드리라 이는 너희가 드릴 영적 예배니라' },
   { group:'A', topic:'A-2. 그리스도께 순종', ref:'요한복음 14:21',
     text:'나의 계명을 지키는 자라야 나를 사랑하는 자니 나를 사랑하는 자는 내 아버지께 사랑을 받을 것이요 나도 그를 사랑하여 그에게 나를 나타내리라' },
   { group:'A', topic:'A-3. 말씀', ref:'디모데후서 3:16',
@@ -606,16 +608,16 @@ var VERSES = [
     text:'이 율법책을 네 입에서 떠나지 말게 하며 주야로 그것을 묵상하여 그 안에 기록된 대로 다 지켜 행하라 그리하면 네 길이 평탄하게 될 것이며 네가 형통하리라' },
   { group:'A', topic:'A-4. 기도', ref:'요한복음 15:7',
     text:'너희가 내 안에 거하고 내 말이 너희 안에 거하면 무엇이든지 원하는 대로 구하라 그리하면 이루리라' },
-  { group:'A', topic:'A-4. 기도', ref:'빌립보서 4:6-7',
+  { group:'A', topic:'A-4. 기도', ref:'빌립보서 4:6,7',
     text:'아무것도 염려하지 말고 다만 모든 일에 기도와 간구로 너희 구할 것을 감사함으로 하나님께 아뢰라 그리하면 모든 지각에 뛰어난 하나님의 평강이 그리스도 예수 안에서 너희 마음과 생각을 지키시리라' },
   { group:'A', topic:'A-5. 교제', ref:'마태복음 18:20',
     text:'두세 사람이 내 이름으로 모인 곳에는 나도 그들 중에 있느니라' },
-  { group:'A', topic:'A-5. 교제', ref:'히브리서 10:24-25',
+  { group:'A', topic:'A-5. 교제', ref:'히브리서 10:24,25',
     text:'서로 돌아보아 사랑과 선행을 격려하며 모이기를 폐하는 어떤 사람들의 습관과 같이 하지 말고 오직 권하여 그날이 가까움을 볼수록 더욱 그리하자' },
   { group:'A', topic:'A-6. 증거', ref:'마태복음 4:19',
-    text:'나를 따라 오라 내가 너희를 사람을 낚는 어부가 되게 하리라' },
+    text:'말씀하시되 나를 따라 오라 내가 너희를 사람을 낚는 어부가 되게 하리라 하시니' },
   { group:'A', topic:'A-6. 증거', ref:'로마서 1:16',
-    text:'내가 복음을 부끄러워하지 아니하노니 이 복음은 모든 믿는 자에게 구원을 주시는 하나님의 능력이 됨이라' },
+    text:'내가 복음을 부끄러워하지 아니하노니 이 복음은 모든 믿는 자에게 구원을 주시는 하나님의 능력이 됨이라 먼저는 유대인에게요 그리고 헬라인에게로다' },
 
   // B. 그리스도를 전파함
   { group:'B', topic:'B-1. 모든 사람이 죄를 범함', ref:'로마서 3:23',
@@ -625,15 +627,15 @@ var VERSES = [
   { group:'B', topic:'B-2. 죄의 형벌', ref:'로마서 6:23',
     text:'죄의 삯은 사망이요 하나님의 은사는 그리스도 예수 우리 주 안에 있는 영생이니라' },
   { group:'B', topic:'B-2. 죄의 형벌', ref:'히브리서 9:27',
-    text:'한 번 죽는 것은 사람에게 정하신 것이요 그 후에는 심판이 있으리니' },
+    text:'한 번 죽는 것은 사람에게 정해진 것이요 그 후에는 심판이 있으리니' },
   { group:'B', topic:'B-3. 그리스도께서 값을 치르심', ref:'로마서 5:8',
-    text:'우리가 아직 죄인 되었을 때에 그리스도께서 우리를 위하여 죽으심으로 하나님께서 우리에게 대한 자기의 사랑을 확증하셨느니라' },
+    text:'우리가 아직 죄인 되었을 때에 그리스도께서 우리를 위하여 죽으심으로 하나님께서 우리에 대한 자기의 사랑을 확증하셨느니라' },
   { group:'B', topic:'B-3. 그리스도께서 값을 치르심', ref:'베드로전서 3:18',
-    text:'그리스도께서도 단번에 죄를 위하여 죽으사 의인으로서 불의한 자를 대신하셨으니 이는 우리를 하나님 앞으로 인도하려 하심이라' },
-  { group:'B', topic:'B-4. 선행으로 구원받지 못함', ref:'에베소서 2:8-9',
+    text:'그리스도께서도 단번에 죄를 위하여 죽으사 의인으로서 불의한 자를 대신하셨으니 이는 우리를 하나님 앞으로 인도하려 하심이라 육체로는 죽임을 당하시고 영으로는 살리심을 받으셨으니' },
+  { group:'B', topic:'B-4. 선행으로 구원받지 못함', ref:'에베소서 2:8,9',
     text:'너희는 그 은혜에 의하여 믿음으로 말미암아 구원을 받았으니 이것은 너희에게서 난 것이 아니요 하나님의 선물이라 행위에서 난 것이 아니니 이는 누구든지 자랑하지 못하게 함이라' },
   { group:'B', topic:'B-4. 선행으로 구원받지 못함', ref:'디도서 3:5',
-    text:'우리를 구원하시되 우리가 행한 바 의로운 행위로 말미암지 아니하고 오직 그의 긍휼하심을 따라 중생의 씻음과 성령의 새롭게 하심으로 하셨나니' },
+    text:'우리를 구원하시되 우리가 행한바 의로운 행위로 말미암지 아니하고 오직 그의 긍휼하심을 따라 중생의 씻음과 성령의 새롭게 하심으로 하셨나니' },
   { group:'B', topic:'B-5. 그리스도를 모셔야 함', ref:'요한복음 1:12',
     text:'영접하는 자 곧 그 이름을 믿는 자들에게는 하나님의 자녀가 되는 권세를 주셨으니' },
   { group:'B', topic:'B-5. 그리스도를 모셔야 함', ref:'요한계시록 3:20',
@@ -641,18 +643,18 @@ var VERSES = [
   { group:'B', topic:'B-6. 구원의 확신', ref:'요한일서 5:13',
     text:'내가 하나님의 아들의 이름을 믿는 너희에게 이것을 쓰는 것은 너희로 하여금 너희에게 영생이 있음을 알게 하려 함이라' },
   { group:'B', topic:'B-6. 구원의 확신', ref:'요한복음 5:24',
-    text:'내 말을 듣고 또 나 보내신 이를 믿는 자는 영생을 얻었고 심판에 이르지 아니하나니 사망에서 생명으로 옮겼느니라' },
+    text:'내가 진실로 진실로 너희에게 이르노니 내 말을 듣고 또 나 보내신 이를 믿는 자는 영생을 얻었고 심판에 이르지 아니하나니 사망에서 생명으로 옮겼느니라' },
 
   // C. 하나님을 의뢰함
   { group:'C', topic:'C-1. 성령', ref:'고린도전서 3:16',
     text:'너희는 너희가 하나님의 성전인 것과 하나님의 성령이 너희 안에 계시는 것을 알지 못하느냐' },
   { group:'C', topic:'C-1. 성령', ref:'고린도전서 2:12',
-    text:'우리가 세상의 영을 받지 아니하고 오직 하나님으로부터 온 영을 받았으니 이는 우리로 하여금 하나님께서 우리에게 은혜로 주신 것들을 알게 하려 하심이라' },
+    text:'우리가 세상의 영을 받지 아니하고 오직 하나님으로부터 온 영을 받았으니 이는 우리로 하여금 하나님께서 우리에게 은혜로 주신 것들을 알게하려 하심이라' },
   { group:'C', topic:'C-2. 능력', ref:'이사야 41:10',
     text:'두려워하지 말라 내가 너와 함께 함이라 놀라지 말라 나는 네 하나님이 됨이라 내가 너를 굳세게 하리라 참으로 너를 도와 주리라 참으로 나의 의로운 오른손으로 너를 붙들리라' },
   { group:'C', topic:'C-2. 능력', ref:'빌립보서 4:13',
     text:'내게 능력 주시는 자 안에서 내가 모든 것을 할 수 있느니라' },
-  { group:'C', topic:'C-3. 성실', ref:'예레미야애가 3:22-23',
+  { group:'C', topic:'C-3. 성실', ref:'예레미야애가 3:22,23',
     text:'여호와의 인자와 긍휼이 무궁하시므로 우리가 진멸되지 아니함이니이다 이것들이 아침마다 새로우니 주의 성실하심이 크시도소이다' },
   { group:'C', topic:'C-3. 성실', ref:'민수기 23:19',
     text:'하나님은 사람이 아니시니 거짓말을 하지 않으시고 인생이 아니시니 후회가 없으시도다 어찌 그 말씀하신 바를 행하지 않으시며 하신 말씀을 실행하지 않으시랴' },
@@ -665,7 +667,7 @@ var VERSES = [
   { group:'C', topic:'C-5. 공급', ref:'빌립보서 4:19',
     text:'나의 하나님이 그리스도 예수 안에서 영광 가운데 그 풍성한 대로 너희 모든 쓸 것을 채우시리라' },
   { group:'C', topic:'C-6. 유혹에서 도우심', ref:'히브리서 2:18',
-    text:'그가 시험을 받아 고난을 당하셨은즉 시험 받는 자들을 능히 도우실 수 있느니라' },
+    text:'그가 시험을 받아 고난을 당하셨은즉 시험받는 자들을 능히 도우실 수 있느니라' },
   { group:'C', topic:'C-6. 유혹에서 도우심', ref:'시편 119:9,11',
     text:'청년이 무엇으로 그의 행실을 깨끗하게 하리이까 주의 말씀만 지킬 따름이니이다 내가 주께 범죄하지 아니하려 하여 주의 말씀을 내 마음에 두었나이다' }
 ];
@@ -1299,6 +1301,58 @@ function showHint() {
 }
 
 // ─── 다음 구절 ────────────────────────────────────────────
+function prevVerse() {
+  var nextBtn = document.getElementById('btn-next');
+  if (nextBtn) { nextBtn.classList.remove('btn-next-highlight'); nextBtn.textContent = '다음 ➡️'; }
+
+  if (queuedVerses.length > 1) {
+    // 랜덤 큐 모드
+    if (currentVerseIdx > 0) {
+      currentVerseIdx--;
+      answered = false;
+      renderCurrentVerse();
+      updateProgress();
+    }
+  } else {
+    // 소단락 순서 이전 구절
+    var curGlobalIdx = queuedVerses[currentVerseIdx];
+    var curVerse = filteredVerses[curGlobalIdx];
+    var curTopic = curVerse ? curVerse.topic : '';
+
+    // 전체 소단락 목록
+    var topics = [];
+    filteredVerses.forEach(function(v) { if (topics.indexOf(v.topic) === -1) topics.push(v.topic); });
+    var curTopicIdx = topics.indexOf(curTopic);
+
+    // 같은 소단락 내 다른 구절
+    var sameTopicOther = [];
+    filteredVerses.forEach(function(v, i) {
+      if (v.topic === curTopic && i !== curGlobalIdx) sameTopicOther.push(i);
+    });
+
+    var prevIdx;
+    if (sameTopicOther.length > 0) {
+      prevIdx = sameTopicOther[0];
+    } else if (curTopicIdx > 0) {
+      // 이전 소단락 마지막 구절
+      var prevTopic = topics[curTopicIdx - 1];
+      filteredVerses.forEach(function(v, i) {
+        if (v.topic === prevTopic) prevIdx = i;
+      });
+    } else {
+      // 이미 첫 구절
+      return;
+    }
+
+    if (prevIdx === undefined) return;
+    queuedVerses = [prevIdx];
+    currentVerseIdx = 0;
+    answered = false;
+    renderCurrentVerse();
+    updateProgress();
+  }
+}
+
 function nextVerse() {
   var nextBtn = document.getElementById('btn-next');
   if (nextBtn) { nextBtn.classList.remove('btn-next-highlight'); nextBtn.textContent = '다음 ➡️'; }
@@ -1368,15 +1422,13 @@ function showFinish() {
 
   if (stageGroupIdx < stageGroups.length - 1) {
     // 같은 단계, 다음 그룹
-    levelInfo = '지금: ' + STAGE_NAMES[currentStage] + ' / ' + stageGroups[stageGroupIdx] + ' 파트 완료!
-→ 다음: ' + stageGroups[stageGroupIdx+1] + ' 파트로!';
+    levelInfo = '지금: ' + STAGE_NAMES[currentStage] + ' / ' + stageGroups[stageGroupIdx] + ' 파트 완료! → 다음: ' + stageGroups[stageGroupIdx+1] + ' 파트로!';
     btnText = '➡️ ' + stageGroups[stageGroupIdx+1] + ' 파트로!';
     title = stageGroups[stageGroupIdx] + ' 파트 완료! 🎉';
     stars = '⭐⭐⭐';
   } else if (currentStage < 4) {
     // 다음 단계로
-    levelInfo = stageGroups[stageGroupIdx] + ' 파트까지 완료!
-→ 더 어려운 ' + STAGE_NAMES[nextStage] + ' 시작!';
+    levelInfo = stageGroups[stageGroupIdx] + ' 파트까지 완료! → 더 어려운 ' + STAGE_NAMES[nextStage] + ' 시작!';
     btnText = '🚀 ' + STAGE_NAMES[nextStage] + ' 시작!';
     title = '단계 완료! 레벨업! 🎊';
     stars = '🌟🌟🌟';
